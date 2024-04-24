@@ -1,0 +1,28 @@
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+// use async_openai::{
+//     types::{CreateImageRequestArgs, ImageSize, ResponseFormat},
+//     Client,
+// };
+// use std::error::Error;
+
+use std::env;
+
+// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+#[tauri::command]
+fn greet(name: &str) -> String {
+    format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+#[tauri::command]
+fn check_openai_key() -> bool {
+    env::var("OPENAI_API_KEY").is_ok()
+}
+
+fn main() {
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![greet])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
