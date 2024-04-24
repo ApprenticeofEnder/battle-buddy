@@ -10,19 +10,21 @@
 use std::env;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn check_api_key(key_var_name: &str) -> bool {
+    env::var(key_var_name).is_ok()
 }
 
 #[tauri::command]
-fn check_openai_key() -> bool {
-    env::var("OPENAI_API_KEY").is_ok()
+fn set_api_key(key_var_name: &str, key: &str) {
+    env::set_var(key_var_name, key);
+    println!("{}: {}", key_var_name, env::var(key_var_name).unwrap());
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![check_api_key, set_api_key])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
